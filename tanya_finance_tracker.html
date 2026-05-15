@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Prime Era · Финансы</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0d14;
+    --surface: #1a1723;
+    --surface2: #221f2e;
+    --border: rgba(180,160,255,0.12);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.15);
+    --purple-glow: rgba(167,139,250,0.08);
+    --gold: #f0c674;
+    --gold-dim: rgba(240,198,116,0.12);
+    --green: #6ee7b7;
+    --green-dim: rgba(110,231,183,0.12);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --text: #e8e2f5;
+    --text-muted: rgba(232,226,245,0.45);
+    --text-dim: rgba(232,226,245,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding-bottom: 120px;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(120,80,200,0.12) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(80,120,200,0.08) 0%, transparent 50%);
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,13,20,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--purple);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nav-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    padding: 16px 20px 0;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .tab.active {
+    background: var(--purple-dim);
+    border-color: rgba(167,139,250,0.3);
+    color: var(--purple);
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 20px; }
+  .section.active { display: block; }
+
+  /* HERO CARD */
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .hero-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .hero-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .hero-stat {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .hero-stat-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+  .hero-stat-val { font-size: 16px; font-weight: 500; }
+  .hero-stat-val.purple { color: var(--purple); }
+  .hero-stat-val.gold { color: var(--gold); }
+  .hero-stat-val.green { color: var(--green); }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label { font-size: 14px; color: var(--text); }
+  .progress-value { font-size: 13px; font-weight: 500; }
+
+  .progress-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* CHECKLIST */
+  .block-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  .block-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .check-item:active { transform: scale(0.98); }
+
+  .check-item.done {
+    background: rgba(110,231,183,0.05);
+    border-color: rgba(110,231,183,0.2);
+  }
+
+  .check-box {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(167,139,250,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+
+  .check-item.done .check-box {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .check-tick {
+    font-size: 12px;
+    color: #0f0d14;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .check-item.done .check-tick { opacity: 1; }
+
+  .check-text { flex: 1; }
+  .check-title { font-size: 14px; color: var(--text); margin-bottom: 3px; transition: color 0.2s; }
+  .check-item.done .check-title { color: var(--text-muted); text-decoration: line-through; text-decoration-color: rgba(232,226,245,0.2); }
+  .check-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .check-amount { font-size: 13px; font-weight: 500; color: var(--purple); white-space: nowrap; margin-top: 1px; }
+
+  /* ASTRO CARD */
+  .astro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .astro-planet {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .astro-body { flex: 1; }
+  .astro-name { font-size: 13px; font-weight: 500; color: var(--purple); margin-bottom: 2px; }
+  .astro-place { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.03em; }
+  .astro-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  /* INSIGHT */
+  .insight {
+    background: var(--purple-glow);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .insight-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--purple);
+    margin-bottom: 10px;
+  }
+
+  .insight-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* BUDGET ROW */
+  .budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 6px;
+  }
+
+  .budget-cat { font-size: 13px; color: var(--text); flex: 1; }
+  .budget-right { text-align: right; }
+  .budget-amount { font-size: 14px; font-weight: 500; }
+  .budget-tag { font-size: 10px; margin-top: 2px; letter-spacing: 0.04em; }
+
+  .tag-save { color: var(--green); }
+  .tag-limit { color: var(--gold); }
+  .tag-keep { color: var(--purple); }
+  .tag-free { color: var(--text-muted); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15,13,20,0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 24px;
+  }
+
+  .bnav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: all 0.2s;
+  }
+
+  .bnav-icon { font-size: 20px; opacity: 0.4; transition: all 0.2s; }
+  .bnav-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; transition: color 0.2s; }
+  .bnav-item.active .bnav-icon { opacity: 1; }
+  .bnav-item.active .bnav-label { color: var(--purple); }
+
+  /* MONTH BADGE */
+  .month-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--purple-dim);
+    border: 1px solid rgba(167,139,250,0.25);
+    border-radius: 100px;
+    padding: 4px 12px 4px 8px;
+    font-size: 12px;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+
+  .month-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
+
+  /* SEPARATOR */
+  .sep { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* RESET BTN */
+  .reset-area {
+    text-align: center;
+    padding: 16px;
+  }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 20px;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:active { color: var(--red); border-color: var(--red); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section.active > * {
+    animation: fadeUp 0.4s ease both;
+  }
+  .section.active > *:nth-child(2) { animation-delay: 0.05s; }
+  .section.active > *:nth-child(3) { animation-delay: 0.1s; }
+  .section.active > *:nth-child(4) { animation-delay: 0.15s; }
+  .section.active > *:nth-child(5) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="nav-title">Prime Era</div>
+    <div class="nav-sub">финансовый трекер</div>
+  </div>
+  <div class="nav-date" id="navDate"></div>
+</nav>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">Обзор</div>
+  <div class="tab" onclick="showTab('may')">Май</div>
+  <div class="tab" onclick="showTab('june')">Июнь</div>
+  <div class="tab" onclick="showTab('july')">Июль</div>
+  <div class="tab" onclick="showTab('astro')">Астро</div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="section active" id="tab-overview">
+
+  <div class="hero" style="margin-top:20px;">
+    <div class="hero-label">Цель на 3 месяца</div>
+    <div class="hero-amount">95 000 ₽</div>
+    <div class="hero-sub">подушка безопасности · май–июль</div>
+    <div class="hero-row">
+      <div class="hero-stat">
+        <div class="hero-stat-label">Отпуск отложено</div>
+        <div class="hero-stat-val purple" id="stat-vacation">150 000 ₽</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-label">Подушка</div>
+        <div class="hero-stat-val gold" id="stat-pillow">0 ₽</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-label">Долг маме</div>
+        <div class="hero-stat-val green" id="stat-debt">30 000 ₽</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <div class="progress-label">Майский план</div>
+      <div class="progress-value purple" id="may-pct" style="color:var(--purple)">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="may-bar" style="width:0%;background:var(--purple)"></div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <div class="progress-label">Июньский план</div>
+      <div class="progress-value" id="jun-pct" style="color:var(--gold)">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="jun-bar" style="width:0%;background:var(--gold)"></div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <div class="progress-label">Июльский план</div>
+      <div class="progress-value" id="jul-pct" style="color:var(--green)">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="jul-bar" style="width:0%;background:var(--green)"></div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:8px;">
+    <div class="insight-label">Астро-принцип</div>
+    <div class="insight-text">Не ограничивать — делать видимым. Сначала откладываешь, потом тратишь остаток без чувства вины.</div>
+  </div>
+
+  <div class="block-title">Три действия</div>
+
+  <div class="check-item" id="action-1" onclick="toggleAction('action-1')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Открыть накопительный счёт</div>
+      <div class="check-desc">Назвать «Отпуск 2026». Готов ждать деньги с запуска.</div>
+    </div>
+  </div>
+
+  <div class="check-item" id="action-2" onclick="toggleAction('action-2')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Лимит на такси 8 000 ₽</div>
+      <div class="check-desc">Уведомление в банке при достижении 6 000 ₽ по Яндексу.</div>
+    </div>
+  </div>
+
+  <div class="check-item" id="action-3" onclick="toggleAction('action-3')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Закуп Вкусвилл раз в неделю</div>
+      <div class="check-desc">По воскресеньям — план на 7 дней. Самокат только экстренно.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MAY -->
+<div class="section" id="tab-may">
+
+  <div class="month-badge" style="margin-top:20px;">
+    <div class="month-dot"></div>
+    Май 2026 · переходный месяц
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">Доход</div>
+    <div class="hero-amount">270 000 ₽</div>
+    <div class="hero-sub">120к найм + 150к запуск</div>
+  </div>
+
+  <div class="block-title">Ключевые задачи</div>
+
+  <div class="check-item" id="may-1" onclick="toggleCheck('may-1')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Перевести маме за MacBook</div>
+      <div class="check-desc">Из аванса — сразу в день поступления</div>
+    </div>
+    <div class="check-amount">30 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="may-2" onclick="toggleCheck('may-2')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">150к с запуска → счёт «Отпуск»</div>
+      <div class="check-desc">В ту же минуту как пришли. Не ждать.</div>
+    </div>
+    <div class="check-amount">150 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="may-3" onclick="toggleCheck('may-3')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Первый взнос в подушку</div>
+      <div class="check-desc">Из остатка зарплаты в конце мая</div>
+    </div>
+    <div class="check-amount">15 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="may-4" onclick="toggleCheck('may-4')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Настроить автоперевод на июнь</div>
+      <div class="check-desc">40 000 ₽ в день зарплаты — автоматом</div>
+    </div>
+    <div class="check-amount">40 000 ₽</div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="block-title">Бюджет мая</div>
+
+  <div class="budget-row">
+    <div class="budget-cat">Еда (Вкусвилл + Самокат + рестораны)</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--text)">50 000 ₽</div>
+      <div class="budget-tag tag-limit">лимит</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Такси / Яндекс</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--gold)">8 000 ₽</div>
+      <div class="budget-tag tag-limit">лимит</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Рабочие подписки</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--purple)">~20 000 ₽</div>
+      <div class="budget-tag tag-keep">не трогать</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Здоровье + танцы</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--purple)">~18 000 ₽</div>
+      <div class="budget-tag tag-keep">не трогать</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Маме за MacBook</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--gold)">30 000 ₽</div>
+      <div class="budget-tag tag-limit">долг закрыт</div>
+    </div>
+  </div>
+  <div class="budget-row" style="border-color:rgba(110,231,183,0.25);background:rgba(110,231,183,0.05);">
+    <div class="budget-cat" style="color:var(--green)">Отпуск → счёт</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--green)">150 000 ₽</div>
+      <div class="budget-tag tag-save">откладываем</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- JUNE -->
+<div class="section" id="tab-june">
+
+  <div class="month-badge" style="margin-top:20px;background:var(--gold-dim);border-color:rgba(240,198,116,0.25);">
+    <div class="month-dot" style="background:var(--gold)"></div>
+    <span style="color:var(--gold)">Июнь 2026 · система в полную силу</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">Доход</div>
+    <div class="hero-amount">300 000 ₽</div>
+    <div class="hero-sub">обычный месяц</div>
+  </div>
+
+  <div class="block-title">Ключевые задачи</div>
+
+  <div class="check-item" id="jun-1" onclick="toggleCheck('jun-1')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Автоперевод в день зарплаты</div>
+      <div class="check-desc">Деньги уходят до того как ты их видишь</div>
+    </div>
+    <div class="check-amount">40 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="jun-2" onclick="toggleCheck('jun-2')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Закуп Вкусвилл в воскресенье</div>
+      <div class="check-desc">Один раз на неделю — не ежедневно</div>
+    </div>
+    <div class="check-amount">−8 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="jun-3" onclick="toggleCheck('jun-3')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Не превысить лимит такси</div>
+      <div class="check-desc">Уведомление при 6 000 ₽ → притормозить</div>
+    </div>
+    <div class="check-amount">8 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="jun-4" onclick="toggleCheck('jun-4')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Подвести итог месяца</div>
+      <div class="check-desc">Сравнить с маем. Скорректировать если нужно.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="block-title">Бюджет июня</div>
+
+  <div class="budget-row" style="border-color:rgba(110,231,183,0.25);background:rgba(110,231,183,0.05);">
+    <div class="budget-cat" style="color:var(--green)">Накопления — в первый день</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--green)">40 000 ₽</div>
+      <div class="budget-tag tag-save">автоматом</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Еда (все каналы)</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--gold)">50 000 ₽</div>
+      <div class="budget-tag tag-limit">лимит</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Такси / Яндекс</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--gold)">8 000 ₽</div>
+      <div class="budget-tag tag-limit">лимит</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Рабочая инфраструктура</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--purple)">~20 000 ₽</div>
+      <div class="budget-tag tag-keep">не трогать</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Здоровье + танцы</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--purple)">~27 000 ₽</div>
+      <div class="budget-tag tag-keep">не трогать</div>
+    </div>
+  </div>
+  <div class="budget-row">
+    <div class="budget-cat">Свободный остаток — твоё</div>
+    <div class="budget-right">
+      <div class="budget-amount" style="color:var(--text)">~135 000 ₽</div>
+      <div class="budget-tag tag-free">без вины</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- JULY -->
+<div class="section" id="tab-july">
+
+  <div class="month-badge" style="margin-top:20px;background:var(--green-dim);border-color:rgba(110,231,183,0.25);">
+    <div class="month-dot" style="background:var(--green)"></div>
+    <span style="color:var(--green)">Июль 2026 · система закреплена</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">Доход + отложено к июлю</div>
+    <div class="hero-amount">~95 000 ₽</div>
+    <div class="hero-sub">в подушке безопасности</div>
+  </div>
+
+  <div class="block-title">Ключевые задачи</div>
+
+  <div class="check-item" id="jul-1" onclick="toggleCheck('jul-1')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Автоперевод снова в первый день</div>
+      <div class="check-desc">Система работает — не думать, не решать</div>
+    </div>
+    <div class="check-amount">40 000 ₽</div>
+  </div>
+
+  <div class="check-item" id="jul-2" onclick="toggleCheck('jul-2')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Проверить счёт «Отпуск 2026»</div>
+      <div class="check-desc">150 000 ₽ лежат нетронутыми с мая?</div>
+    </div>
+  </div>
+
+  <div class="check-item" id="jul-3" onclick="toggleCheck('jul-3')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Итог квартала — разбор трат</div>
+      <div class="check-desc">Сравнить апрель и июль. Сколько высвободила?</div>
+    </div>
+  </div>
+
+  <div class="check-item" id="jul-4" onclick="toggleCheck('jul-4')">
+    <div class="check-box"><span class="check-tick">✓</span></div>
+    <div class="check-text">
+      <div class="check-title">Запланировать отпуск</div>
+      <div class="check-desc">Деньги есть — куда едем?</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="insight">
+    <div class="insight-label">Итог трёх месяцев</div>
+    <div class="insight-text">Подушка 95 000 ₽ · Отпуск 150 000 ₽ · Долг закрыт · Система работает сама</div>
+  </div>
+
+</div>
+
+<!-- ASTRO -->
+<div class="section" id="tab-astro">
+
+  <div class="block-title" style="margin-top:20px;">Астро-профиль</div>
+  <div class="block-sub">Как планеты влияют на твои деньги</div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:var(--purple-dim)">♀</div>
+    <div class="astro-body">
+      <div class="astro-name">Венера · Близнецы, 11 дом</div>
+      <div class="astro-place">деньги и удовольствия</div>
+      <div class="astro-text">Тратишь на информацию, связи, удобство движения. Вкусвилл, Самокат, подписки — это твоя Венера. Осознанно.</div>
+    </div>
+  </div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:var(--gold-dim)">♃</div>
+    <div class="astro-body">
+      <div class="astro-name">Юпитер · Козерог, 5 дом</div>
+      <div class="astro-place">оппозиция Солнцу в 11 доме</div>
+      <div class="astro-text">Раздувает расходы через «я заслужила». Логика самооправдания работает слишком хорошо. Юпитер любит размах без берегов.</div>
+    </div>
+  </div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:rgba(232,226,245,0.06)">☿</div>
+    <div class="astro-body">
+      <div class="astro-name">Меркурий + Марс · Близнецы, 10 дом</div>
+      <div class="astro-place">соединение</div>
+      <div class="astro-text">Импульс → оплата → забыл. Много мелких транзакций. Скорость без паузы. Нужен внешний стопор, а не внутренняя воля.</div>
+    </div>
+  </div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:rgba(248,113,113,0.1)">♆</div>
+    <div class="astro-body">
+      <div class="astro-name">8 дом · Рыбы, упр. Нептун в 6 доме</div>
+      <div class="astro-place">чужие деньги, трансформация</div>
+      <div class="astro-text">Размытые границы с деньгами. «Разное» — категория-невидимка Нептуна. Поглощает четверть бюджета непрозрачно.</div>
+    </div>
+  </div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:rgba(232,226,245,0.06)">♄</div>
+    <div class="astro-body">
+      <div class="astro-name">Сатурн · Овен, 9 дом</div>
+      <div class="astro-place">квадрат к Луне и Юпитеру</div>
+      <div class="astro-text">Жёсткие бюджеты не работают — ощущаются как клетка. Нужна система которая не ограничивает, а меняет порядок действий.</div>
+    </div>
+  </div>
+
+  <div class="astro-card">
+    <div class="astro-planet" style="background:rgba(232,226,245,0.06)">♍</div>
+    <div class="astro-body">
+      <div class="astro-name">2 дом · Дева</div>
+      <div class="astro-place">управитель Меркурий в 10 доме</div>
+      <div class="astro-text">Проявляется как избирательность в качестве, не в количестве. Вкусвилл вместо Пятёрочки. MacBook вместо дешёвого ноутбука. Это и есть твоя Дева.</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-label">Ключевой инсайт</div>
+    <div class="insight-text">Сначала отложи — потом трать остаток. Меркурий в Близнецах не видит деньги которых нет на счету.</div>
+  </div>
+
+  <div class="reset-area">
+    <button class="reset-btn" onclick="resetAll()">Сбросить все отметки</button>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-item active" onclick="showMain('overview')" id="bnav-overview">
+    <div class="bnav-icon">◎</div>
+    <div class="bnav-label">Обзор</div>
+  </div>
+  <div class="bnav-item" onclick="showMain('may')" id="bnav-may">
+    <div class="bnav-icon">◐</div>
+    <div class="bnav-label">Май</div>
+  </div>
+  <div class="bnav-item" onclick="showMain('june')" id="bnav-june">
+    <div class="bnav-icon">◕</div>
+    <div class="bnav-label">Июнь</div>
+  </div>
+  <div class="bnav-item" onclick="showMain('july')" id="bnav-july">
+    <div class="bnav-icon">●</div>
+    <div class="bnav-label">Июль</div>
+  </div>
+  <div class="bnav-item" onclick="showMain('astro')" id="bnav-astro">
+    <div class="bnav-icon">✦</div>
+    <div class="bnav-label">Астро</div>
+  </div>
+</div>
+
+<script>
+const CHECKS = ['action-1','action-2','action-3','may-1','may-2','may-3','may-4','jun-1','jun-2','jun-3','jun-4','jul-1','jul-2','jul-3','jul-4'];
+const MAY_CHECKS = ['may-1','may-2','may-3','may-4'];
+const JUN_CHECKS = ['jun-1','jun-2','jun-3','jun-4'];
+const JUL_CHECKS = ['jul-1','jul-2','jul-3','jul-4'];
+
+let state = {};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('prime_era_finance_v1');
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+  CHECKS.forEach(id => { if (!(id in state)) state[id] = false; });
+}
+
+function saveState() {
+  try { localStorage.setItem('prime_era_finance_v1', JSON.stringify(state)); } catch(e) {}
+}
+
+function toggleCheck(id) {
+  state[id] = !state[id];
+  saveState();
+  renderAll();
+}
+
+function toggleAction(id) { toggleCheck(id); }
+
+function renderAll() {
+  CHECKS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('done', state[id]);
+  });
+
+  // Update progress bars
+  function pct(arr) { return Math.round(arr.filter(id => state[id]).length / arr.length * 100); }
+  const mayP = pct(MAY_CHECKS), junP = pct(JUN_CHECKS), julP = pct(JUL_CHECKS);
+
+  document.getElementById('may-pct').textContent = mayP + '%';
+  document.getElementById('jun-pct').textContent = junP + '%';
+  document.getElementById('jul-pct').textContent = julP + '%';
+  document.getElementById('may-bar').style.width = mayP + '%';
+  document.getElementById('jun-bar').style.width = junP + '%';
+  document.getElementById('jul-bar').style.width = julP + '%';
+
+  // Update stats
+  const mamaOk = state['may-1'];
+  const vacationOk = state['may-2'];
+  const pillowMay = state['may-3'] ? 15000 : 0;
+  const pillowJun = state['jun-1'] ? 40000 : 0;
+  const pillowJul = state['jul-1'] ? 40000 : 0;
+  const totalPillow = pillowMay + pillowJun + pillowJul;
+
+  document.getElementById('stat-vacation').textContent = vacationOk ? '✓ отложен' : '150 000 ₽';
+  document.getElementById('stat-vacation').style.color = vacationOk ? 'var(--green)' : 'var(--purple)';
+  document.getElementById('stat-pillow').textContent = totalPillow.toLocaleString('ru') + ' ₽';
+  document.getElementById('stat-debt').textContent = mamaOk ? '✓ закрыт' : '30 000 ₽';
+  document.getElementById('stat-debt').style.color = mamaOk ? 'var(--green)' : 'var(--gold)';
+}
+
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showMain(name) {
+  // sync tabs
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  const tabMap = { overview: 0, may: 1, june: 2, july: 3, astro: 4 };
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab')[tabMap[name]].classList.add('active');
+  document.getElementById('bnav-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function resetAll() {
+  if (confirm('Сбросить все галочки?')) {
+    CHECKS.forEach(id => state[id] = false);
+    saveState();
+    renderAll();
+  }
+}
+
+// Date
+const days = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const now = new Date();
+document.getElementById('navDate').innerHTML = now.getDate() + ' ' + months[now.getMonth()] + '<br>' + days[now.getDay()];
+
+loadState();
+renderAll();
+</script>
+</body>
+</html>
